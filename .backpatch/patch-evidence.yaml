@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 1.3.4-backpatch-00006
+release: 1.3.4-backpatch-00007
 baseline: v1.3.3+backpatch.baseline
 fixes:
   - cve: CVE-2026-33891
@@ -50,12 +50,20 @@ fixes:
     basis: backport
     artifacts:
       - node-forge
-    note: "New in this release; upstream's fix in 1.4.1. It closes the advisory: Forge: ASN.1 OID first arc truncation in asn1.oidToDer."
+    note: "Carried from 1.3.4-backpatch-00006; upstream's fix in 1.4.1. It closes the advisory: Forge: ASN.1 OID first arc truncation in asn1.oidToDer."
+  - cve: CVE-2026-118776
+    upstream_fix_url: https://github.com/digitalbazaar/forge/commit/81774ff99e2da64aec9a43591df45a360040c136
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-118776
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-forge/commit/16fb11a
+    basis: backport
+    artifacts:
+      - node-forge
+    note: "New in this release; upstream's fix in 1.4.1. It closes the advisory: Forge: Incomplete PKCS#7 padding validation in AES/DES CBC and ECB decryption."
 tests:
-  commit: c8c56081cde43b48337eb5e9ffbee69575544ba5
+  commit: 16fb11a1b2064e00af6006d6cf4e2e60888d1a73
   command: webpack, then NODE_ENV=test mocha -t 30000 -R xunit tests/unit/index.js (upstream's test-node script with the xunit reporter, its timestamp attribute removed), with the verify run's node_modules for the tag
   runtime: Node.js v22.16.0, npm 11.4.2, mocha 5.2.0, macOS 27.2 arm64
-  report: node-forge-1.3.4-backpatch-00006-tests.zip
-  report_sha256: 0377eddc26c5319e376554e0714d65c01ac9a7e3f0cfd8dbb43339b064ca5fe0
+  report: node-forge-1.3.4-backpatch-00007-tests.zip
+  report_sha256: b40c118ea636f8e77ab61a05783dda6a92fca103fb02368a3edc3c47e04f4c8d
   result: pass
-  note: "upstream's mocha suite tests/unit/index.js at the tested commit: 838 tests, 834 passed, 0 failed, 4 skipped. The CVE tests (tests/unit/asn1.js), with this release's production lines reverted at the tested commit: 107 tests, 99 passed, 8 failed, 0 skipped; with them: 107 tests, 107 passed, 0 failed, 0 skipped. Built with webpack in a directory named node-forge, 50 of npmjs's 59 files for 1.3.3 are identical; the rest are dist/forge.all.min.js, dist/forge.min.js, dist/prime.worker.min.js, lib/asn1.js, lib/ed25519.js, lib/jsbn.js, lib/rsa.js, lib/x509.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
+  note: "upstream's mocha suite tests/unit/index.js at the tested commit: 848 tests, 844 passed, 0 failed, 4 skipped. The CVE tests (tests/unit/aes.js), with this release's production lines reverted at the tested commit: 198 tests, 184 passed, 14 failed, 0 skipped; with them: 198 tests, 198 passed, 0 failed, 0 skipped. Built with webpack in a directory named node-forge, 49 of npmjs's 59 files for 1.3.3 are identical; the rest are dist/forge.all.min.js, dist/forge.min.js, dist/prime.worker.min.js, lib/asn1.js, lib/cipherModes.js, lib/ed25519.js, lib/jsbn.js, lib/rsa.js, lib/x509.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
