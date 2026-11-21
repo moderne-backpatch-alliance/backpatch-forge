@@ -172,6 +172,73 @@ require('../../lib/util');
       }
     });
 
+    describe('client without a session', function() {
+      // see GHSA-j8rw-jp99-435v
+      // warning close_notify alert
+      var CLOSE_NOTIFY = forge.util.hexToBytes('15030100020100');
+      // ServerHello with an empty body
+      var SERVER_HELLO = forge.util.hexToBytes('160301000402000000');
+
+      function createConnection(log) {
+        return forge.tls.createConnection({
+          server: false,
+          verify: function() {
+            return true;
+          },
+          tlsDataReady: function(c) {
+            c.tlsData.getBytes();
+          },
+          dataReady: function(c) {
+            c.data.getBytes();
+          },
+          closed: function() {
+            log.closed++;
+          },
+          error: function(c, error) {
+            log.errors.push(error.message);
+          }
+        });
+      }
+
+      it('should ignore a ServerHello before handshake()', function() {
+        var log = {closed: 0, errors: []};
+        var c = createConnection(log);
+        c.process(SERVER_HELLO);
+        ASSERT.deepEqual(log.errors, []);
+      });
+
+      it('should ignore a ServerHello after close_notify', function() {
+        var log = {closed: 0, errors: []};
+        var c = createConnection(log);
+        c.handshake();
+        c.process(CLOSE_NOTIFY);
+        ASSERT.equal(log.closed, 1);
+        c.process(SERVER_HELLO);
+        ASSERT.deepEqual(log.errors, []);
+      });
+
+      it('should ignore a ServerHello after close()', function() {
+        var log = {closed: 0, errors: []};
+        var c = createConnection(log);
+        c.handshake();
+        c.close();
+        ASSERT.equal(log.closed, 1);
+        c.process(SERVER_HELLO);
+        ASSERT.deepEqual(log.errors, []);
+      });
+
+      it('should handle a ServerHello after a new handshake()', function() {
+        var log = {closed: 0, errors: []};
+        var c = createConnection(log);
+        c.handshake();
+        c.close();
+        c.handshake();
+        c.process(SERVER_HELLO);
+        ASSERT.equal(log.errors.length, 1);
+        ASSERT.ok(/ServerHello/.test(log.errors[0]), log.errors[0]);
+      });
+    });
+
     describe('ServerHello compression method', function() {
       // see GHSA-w4xr-hqv8-ch44
       // set the compression method of the ServerHello in plaintext TLS
