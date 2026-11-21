@@ -1,6 +1,6 @@
 schema: osera-patch-evidence/0.1.0
 producer: moderne
-release: 1.3.4-backpatch-00018
+release: 1.3.4-backpatch-00019
 baseline: v1.3.3+backpatch.baseline
 fixes:
   - cve: CVE-2026-33891
@@ -146,12 +146,20 @@ fixes:
     basis: backport
     artifacts:
       - node-forge
-    note: "New in this release; upstream's fix in 1.4.1. It closes the advisory: Forge: X.509 basicConstraints bypass in verifyCertificateChain() via deprecated extension OIDs 2.5.29.10 and 2.5.29.13."
+    note: "Carried from 1.3.4-backpatch-00018; upstream's fix in 1.4.1. It closes the advisory: Forge: X.509 basicConstraints bypass in verifyCertificateChain() via deprecated extension OIDs 2.5.29.10 and 2.5.29.13."
+  - cve: CVE-2026-119191
+    upstream_fix_url: https://github.com/digitalbazaar/forge/commit/24035c181f41885ea3ec7279e6c0fcf270b6ec4b
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-119191
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-forge/commit/b7ff2e3
+    basis: backport
+    artifacts:
+      - node-forge
+    note: "New in this release; upstream's fix in 1.4.1 (24035c1, 523c8e7). It closes the advisory: Forge: ASN.1 resource exhaustion via BIT STRING decoding in asn1.fromDer."
 tests:
-  commit: 99eccdeb45b2850d18c71720ac33ca518b0ebdfa
+  commit: b7ff2e3d8a6d2d0e65f23251b0b603271a40a460
   command: webpack, then NODE_ENV=test mocha -t 30000 -R xunit tests/unit/index.js (upstream's test-node script with the xunit reporter, its timestamp attribute removed), with the verify run's node_modules for the tag
   runtime: Node.js v22.16.0, npm 11.4.2, mocha 5.2.0, macOS 27.2 arm64
-  report: node-forge-1.3.4-backpatch-00018-tests.zip
-  report_sha256: c11eceddc00e9365ee608fcf467d9f1345e7210d2993f9c16e19a339648493f6
+  report: node-forge-1.3.4-backpatch-00019-tests.zip
+  report_sha256: 05c07bcf718de6eac835344a1e375e0bec98bdb1b4dcb45bb01e6959b6252374
   result: pass
-  note: "upstream's mocha suite tests/unit/index.js at the tested commit: 915 tests, 911 passed, 0 failed, 4 skipped. The CVE tests (tests/unit/x509.js), with this release's production lines reverted at the tested commit: 67 tests, 63 passed, 4 failed, 0 skipped; with them: 67 tests, 67 passed, 0 failed, 0 skipped. Built with webpack in a directory named node-forge, 43 of npmjs's 59 files for 1.3.3 are identical; the rest are dist/forge.all.min.js, dist/forge.min.js, dist/prime.worker.min.js, lib/asn1.js, lib/cipher.js, lib/cipherModes.js, lib/ed25519.js, lib/http.js, lib/jsbn.js, lib/pbe.js, lib/pem.js, lib/pkcs12.js, lib/rsa.js, lib/tls.js, lib/x509.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
+  note: "upstream's mocha suite tests/unit/index.js at the tested commit: 920 tests, 916 passed, 0 failed, 4 skipped. The CVE tests (tests/unit/asn1.js), with this release's production lines reverted at the tested commit: 112 tests, 102 passed, 10 failed, 0 skipped; with them: 112 tests, 112 passed, 0 failed, 0 skipped. Built with webpack in a directory named node-forge, 43 of npmjs's 59 files for 1.3.3 are identical; the rest are dist/forge.all.min.js, dist/forge.min.js, dist/prime.worker.min.js, lib/asn1.js, lib/cipher.js, lib/cipherModes.js, lib/ed25519.js, lib/http.js, lib/jsbn.js, lib/pbe.js, lib/pem.js, lib/pkcs12.js, lib/rsa.js, lib/tls.js, lib/x509.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
